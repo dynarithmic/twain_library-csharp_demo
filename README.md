@@ -5,4 +5,4 @@ This demo consists of a Visual Studio solution, **CSharp_FullDemo.sln**.  To bui
 
 Once built, the demo assumes that <a href="https://github.com/dynarithmic/twain_library/tree/master/binaries/32bit" target="_blank">dtwain32u.dll</a> is available (either on the system PATH or in the same directory as the executable) when the demo is run.  
 
-In addition, please remember that the DTWAIN text resources (twaininfo.txt, twainresourcestrings_english.txt) also need to be available (perferably in the same directory as the executable file).
+In addition, please remember that the DTWAIN [text resources](https://github.com/dynarithmic/twain_library/tree/master/text_resources) are available in the same directory where `dtwain32u.dll` is located) (twaininfo.txt, twainresourcestrings_english.txt) also need to be available (perferably in the same directory as `dtwain32u.dll`).
