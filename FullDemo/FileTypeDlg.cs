@@ -33,6 +33,8 @@ namespace TWAINDemo
         }
 
         private AllTypes[] g_allTypes = {new AllTypes("BMP File", TwainAPI.DTWAIN_BMP, "test.bmp"),
+                                 new AllTypes("BMP RLE File",TwainAPI.DTWAIN_BMP_RLE, "testrle.bmp"),
+                                 new AllTypes("PCX File",TwainAPI.DTWAIN_PCX, "test.pcx"),
                                  new AllTypes("Multi-page DCX File",TwainAPI.DTWAIN_DCX, "test.dcx"),
                                  new AllTypes("Enhanced Meta File (EMF)",TwainAPI.DTWAIN_EMF, "test.emf"),
                                  new AllTypes("GIF File", TwainAPI.DTWAIN_GIF, "test.gif"),
@@ -51,11 +53,19 @@ namespace TWAINDemo
                                  new AllTypes("TIFF (Packbits)", TwainAPI.DTWAIN_TIFFPACKBITSMULTI, "test.tif"),
                                  new AllTypes("TIFF (Flate compression)", TwainAPI.DTWAIN_TIFFDEFLATEMULTI, "test.tif"),
                                  new AllTypes("TIFF (LZW compression)", TwainAPI.DTWAIN_TIFFLZWMULTI, "test.tif"),
+                                 new AllTypes("BigTIFF (No compression)", TwainAPI.DTWAIN_BIGTIFFNONEMULTI, "test.tif"),
+                                 new AllTypes("BigTIFF (CCITT Group 3)", TwainAPI.DTWAIN_BIGTIFFG3MULTI, "test.tif"),
+                                 new AllTypes("BigTIFF (CCITT Group 4)", TwainAPI.DTWAIN_BIGTIFFG4MULTI, "test.tif"),
+                                 new AllTypes("BigTIFF (JPEG compression)", TwainAPI.DTWAIN_BIGTIFFJPEGMULTI, "test.tif"),
+                                 new AllTypes("BigTIFF (Packbits)", TwainAPI.DTWAIN_BIGTIFFPACKBITSMULTI, "test.tif"),
+                                 new AllTypes("BigTIFF (Flate compression)", TwainAPI.DTWAIN_BIGTIFFDEFLATEMULTI, "test.tif"),
+                                 new AllTypes("BigTIFF (LZW compression)", TwainAPI.DTWAIN_BIGTIFFLZWMULTI, "test.tif"),
                                  new AllTypes("Targa (TGA) File", TwainAPI.DTWAIN_TGA, "test.tga"),
+                                 new AllTypes("Targa RLE (TGA) File",TwainAPI.DTWAIN_TGA_RLE, "testrle.tga"),
                                  new AllTypes("Windows Meta File (WMF)", TwainAPI.DTWAIN_WMF, "test.wmf"),
-                                 new AllTypes("Windows ICON File (ICO)", TwainAPI.DTWAIN_ICO, "test.ico"),
+                                 new AllTypes("Windows ICON File (ICO)", TwainAPI.DTWAIN_ICO_RESIZED, "test.ico"),
                                  new AllTypes("Windows ICON File- Vista compatible (ICO)", TwainAPI.DTWAIN_ICO_VISTA, "test.ico"),
-                                 new AllTypes("Wireless Bitmap File (WBMP)", TwainAPI.DTWAIN_WBMP, "test.wbmp")};
+                                 new AllTypes("Wireless Bitmap File (WBMP)", TwainAPI.DTWAIN_WBMP_RESIZED, "test.wbmp")};
 
 
         public FileTypeDlg()
