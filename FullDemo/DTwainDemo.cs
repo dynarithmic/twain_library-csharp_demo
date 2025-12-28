@@ -70,7 +70,11 @@ namespace TWAINDemo
         private Boolean initialized;
         private TwainAPI.DTwainCallback theCallback;
 
+        #if _X64
+        public long CallbackProc(long wParam, long lParam, long UserData)
+        #else
         public int CallbackProc(int wParam, int lParam, int UserData)
+        #endif
         {
             switch (wParam)
             {
@@ -754,7 +758,7 @@ namespace TWAINDemo
                 if (status == TwainAPI.DTWAIN_TN_ACQUIREDONE)
                     MessageBox.Show("Image file saved successfully");
                 else
-                if (TwainAPI.DTWAIN_GetSavedFilesCount(SelectedSource) == 0)
+                if (TwainAPI.DTWAIN_GetFileSavePageCount(SelectedSource) == 0)
                     MessageBox.Show("No Images acquired");
                 else
                     MessageBox.Show("The acquisition returned a status of " + status.ToString());

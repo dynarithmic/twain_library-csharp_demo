@@ -137,15 +137,16 @@ namespace Dynarithmic
             public int      flagsEx = 0;
         }
 
-        public delegate int  DTwainCallback( int wParam, int lParam, int UserData );
-        public delegate int  DTwainDibUpdateCallback( DTWAIN_SOURCE Source, int pagenum, DTWAIN_HANDLE dibHandle);
-        public delegate int  DTwainCallback64( int wParam, int lParam, long UserData );
-        public delegate int  DTwainErrorProc( int param1, int param2 );
-        public delegate int  DTwainErrorProc64( int param1, long param2);
-        public delegate int  DTwainLoggerProcA([MarshalAs(UnmanagedType.LPStr)] string lpszName, long UserData);
-        public delegate int  DTwainLoggerProcW([MarshalAs(UnmanagedType.LPWStr)] string lpszName, long UserData);
-        public delegate int  DTwainLoggerProc([MarshalAs(UnmanagedType.LPTStr)] string lpszName, long UserData);
+
+        public delegate long  DTwainCallback( long wParam, long lParam, long UserData );
+        public delegate long  DTwainCallback64( long wParam, long lParam, long UserData );
+        public delegate long  DTwainErrorProc( int param1, int param2 );
+        public delegate long  DTwainErrorProc64( int param1, long param2);
+        public delegate long  DTwainLoggerProcA([MarshalAs(UnmanagedType.LPStr)] string lpszName, long UserData);
+        public delegate long  DTwainLoggerProcW([MarshalAs(UnmanagedType.LPWStr)] string lpszName, long UserData);
         public delegate DTWAIN_HANDLE DTwainDIBUpdateProc(DTWAIN_SOURCE source, int currentImage, DTWAIN_HANDLE DibData);
+        public delegate long  DTwainLoggerProc([MarshalAs(UnmanagedType.LPTStr)] string lpszName, long UserData);
+
         public const int DTWAIN_FF_TIFF = 0;
         public const int DTWAIN_FF_PICT = 1;
         public const int DTWAIN_FF_BMP = 2;
@@ -1780,6 +1781,7 @@ namespace Dynarithmic
         public const int DTWAIN_CONSTANT_ICAP = 78;
         public const int DTWAIN_CONSTANT_DTWAIN_CONT = 79;
         public const int DTWAIN_CONSTANT_CAPCODE_MAP = 80;
+        public const int DTWAIN_CONSTANT_ACAP = 81;
         public const int DTWAIN_USERRES_START = 20000;
         public const int DTWAIN_USERRES_MAXSIZE = 8192;
         public const int DTWAIN_APIHANDLEOK = 1;
@@ -2848,6 +2850,9 @@ namespace Dynarithmic
         public static extern int DTWAIN_GetAcquireArea2StringW(DTWAIN_SOURCE Source, [MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder left, [MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder top, [MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder right, [MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder bottom, ref int Unit);
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern DTWAIN_ARRAY DTWAIN_GetAcquireAreaEx(DTWAIN_SOURCE Source, int lGetType);
+
+        [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int DTWAIN_GetAcquireMetrics(DTWAIN_SOURCE source, ref int ImageCount, ref int SheetCount);
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
@@ -2885,6 +2890,9 @@ namespace Dynarithmic
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int DTWAIN_GetAlarmVolume(DTWAIN_SOURCE Source, ref int lpVolume);
+
+        [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern DTWAIN_ARRAY DTWAIN_GetAllSourceDibs(DTWAIN_SOURCE Source);
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int DTWAIN_GetAppInfo([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder szVerStr, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder szManu, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder szProdFam, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder szProdName);
@@ -2945,6 +2953,9 @@ namespace Dynarithmic
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int DTWAIN_GetCapContainerEx(int nCap, int bSetContainer, ref DTWAIN_ARRAY ConTypes);
+
+        [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern DTWAIN_ARRAY DTWAIN_GetCapContainerEx2(int nCap, int bSetContainer);
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int DTWAIN_GetCapDataType(DTWAIN_SOURCE Source, int nCap);
@@ -3146,6 +3157,9 @@ namespace Dynarithmic
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int DTWAIN_GetFileCompressionType(DTWAIN_SOURCE Source);
+
+        [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern int DTWAIN_GetFileSavePageCount(DTWAIN_SOURCE Source);
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int DTWAIN_GetFileTypeExtensions(int nType, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder lpszName, int nLength);
@@ -3479,9 +3493,6 @@ namespace Dynarithmic
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Unicode, ExactSpelling = true)]
         public static extern int DTWAIN_GetSaveFileNameW(DTWAIN_SOURCE Source, [MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder fName, int nMaxLen);
-
-        [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern int DTWAIN_GetSavedFilesCount(DTWAIN_SOURCE Source);
 
         [DllImport(DTWAIN_LIBRARY, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int DTWAIN_GetSessionDetails([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder szBuf, int nSize, int indentFactor, int bRefresh);
