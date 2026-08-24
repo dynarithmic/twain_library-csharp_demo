@@ -882,6 +882,9 @@
         public const int DTWAIN_ERR_RANGE_STEPISZERO = (-1086);
         public const int DTWAIN_ERR_BLANKNAMEDETECTED = (-1087);
         public const int DTWAIN_ERR_FEEDER_NOPAPERSENSOR = (-1088);
+        public const int DTWAIN_ERR_DTWAINDLL_LOADERROR = (-1089);
+        public const int DTWAIN_ERR_DTWAINDLL_VERSION = (-1090);
+        public const int DTWAIN_ERR_ACTIVE_TWAINSESSION = (-1091);
         public const int TWAIN_ERR_LOW_MEMORY = (-1100);
         public const int TWAIN_ERR_FALSE_ALARM = (-1101);
         public const int TWAIN_ERR_BUMMER = (-1102);
@@ -1814,6 +1817,12 @@
         public const int DTWAIN_PDF_AES256 = 2;
         public const int DTWAIN_FEEDER_TERMINATE = 1;
         public const int DTWAIN_FEEDER_USEFLATBED = 2;
+        public const int DTWAIN_CHECKDLLVERLESS = 0;
+        public const int DTWAIN_CHECKDLLVEREQUAL = 1;
+        public const int DTWAIN_CHECKDLLVERGREATER = 2;
+        public const int DTWAIN_CHECKDLLVERLESSEQ = 3;
+        public const int DTWAIN_CHECKDLLVERGREATEREQ = 4;
+        public const int DTWAIN_RESOURCE_COPYRIGHT = 9700;
         // string type constants
         // these include room for the strings and a null char
         public enum TWSTR : int
@@ -1961,6 +1970,7 @@
         public delegate DTWAIN_ARRAY DTWAIN_ArrayCreateFromLong64sDelegate([In] long[] pCArray, int nSize);
         public delegate DTWAIN_ARRAY DTWAIN_ArrayCreateFromLongsDelegate([In] int[] pCArray, int nSize);
         public delegate DTWAIN_ARRAY DTWAIN_ArrayCreateFromStringsDelegate([In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPTStr)] string[] pCArray, int nSize);
+        public delegate DTWAIN_ARRAY DTWAIN_ArrayCreateFromTypeDelegate(DTWAIN_SOURCE Source, int lType, int lSize);
         public delegate DTWAIN_ARRAY DTWAIN_ArrayCreateFromWideStringsDelegate([In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[] pCArray, int nSize);
         public delegate int DTWAIN_ArrayDestroyDelegate(DTWAIN_ARRAY pArray);
         public delegate int DTWAIN_ArrayDestroyAllDelegate();
@@ -2050,6 +2060,7 @@
         public delegate int DTWAIN_CallCallbackDelegate(int wParam, int lParam, int UserData);
         public delegate int DTWAIN_CallCallback64Delegate(int wParam, int lParam, LONGLONG UserData);
         public delegate int DTWAIN_CallDSMProcDelegate(DTWAIN_IDENTITY AppID, DTWAIN_IDENTITY SourceId, int lDG, int lDAT, int lMSG, System.IntPtr pData);
+        public delegate int DTWAIN_CheckDLLVersionDelegate(int lMajor, int lMinor, int lPatchLevel, int lBuildNumber, int MatchType);
         public delegate int DTWAIN_CheckHandlesDelegate(int bCheck);
         public delegate int DTWAIN_ClearBuffersDelegate(DTWAIN_SOURCE Source, int ClearBuffer);
         public delegate int DTWAIN_ClearErrorBufferDelegate();
@@ -2292,7 +2303,7 @@
         public delegate int DTWAIN_GetCapValuesEx2Delegate(DTWAIN_SOURCE Source, int lCap, int lGetType, int lContainerType, int nDataType, ref DTWAIN_ARRAY pArray);
         public delegate int DTWAIN_GetCaptionDelegate(DTWAIN_SOURCE Source, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder Caption);
         public delegate int DTWAIN_GetCaptionDelegate_overload(DTWAIN_SOURCE Source, System.IntPtr Caption);
-        public delegate int DTWAIN_GetCompressionSizeDelegate(DTWAIN_SOURCE Source, ref int lBytes);
+        public delegate int DTWAIN_GetCompressionSizeDelegate(DTWAIN_SOURCE Source, ref DWORD lBytes);
         public delegate int DTWAIN_GetCompressionTypeDelegate(DTWAIN_SOURCE Source, ref int lpCompression, int bCurrent);
         public delegate int DTWAIN_GetCompressionTypeExDelegate(DTWAIN_SOURCE Source, int bCurrent);
         public delegate int DTWAIN_GetConditionCodeStringDelegate(int lError, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder lpszBuffer, int nMaxLen);
@@ -2316,8 +2327,8 @@
         public delegate int DTWAIN_GetDSMSearchOrderExDelegate([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder SearchOrder, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder UserDirectory);
         public delegate int DTWAIN_GetDSMSearchOrderExDelegate_overload(System.IntPtr SearchOrder, System.IntPtr UserDirectory);
         public delegate DTWAIN_HANDLE DTWAIN_GetDTWAINHandleDelegate();
-        public delegate int DTWAIN_GetDeviceEventDelegate(DTWAIN_SOURCE Source, ref int lpEvent);
-        public delegate int DTWAIN_GetDeviceEventExDelegate(DTWAIN_SOURCE Source, ref int lpEvent, ref DTWAIN_ARRAY pArray);
+        public delegate int DTWAIN_GetDeviceEventDelegate(DTWAIN_SOURCE Source, ref DWORD lpEvent);
+        public delegate int DTWAIN_GetDeviceEventExDelegate(DTWAIN_SOURCE Source, ref DWORD lpEvent, ref DTWAIN_ARRAY pArray);
         public delegate int DTWAIN_GetDeviceEventInfoDelegate(DTWAIN_SOURCE Source, int nWhichInfo, System.IntPtr pValue);
         public delegate int DTWAIN_GetDeviceNotificationsDelegate(DTWAIN_SOURCE Source, ref int DevEvents);
         public delegate int DTWAIN_GetDeviceTimeDateDelegate(DTWAIN_SOURCE Source, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder szTimeDate);
@@ -2327,7 +2338,7 @@
         public delegate int DTWAIN_GetDuplexTypeDelegate(DTWAIN_SOURCE Source, ref int lpDupType);
         public delegate int DTWAIN_GetDuplexTypeExDelegate(DTWAIN_SOURCE Source);
         public delegate int DTWAIN_GetErrorBufferDelegate(ref DTWAIN_ARRAY ArrayBuffer);
-        public delegate int DTWAIN_GetErrorBufferThresholdDelegate();
+        public delegate uint DTWAIN_GetErrorBufferThresholdDelegate();
         public delegate DTwainErrorProc DTWAIN_GetErrorCallbackDelegate();
         public delegate DTwainErrorProc64 DTWAIN_GetErrorCallback64Delegate();
         public delegate int DTWAIN_GetErrorStringDelegate(int lError, [MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder lpszBuffer, int nMaxLen);
@@ -2372,6 +2383,7 @@
         public delegate int DTWAIN_GetLightSourcesDelegate(DTWAIN_SOURCE Source, ref DTWAIN_ARRAY LightSources);
         public delegate DTWAIN_ARRAY DTWAIN_GetLightSourcesExDelegate(DTWAIN_SOURCE Source);
         public delegate DTwainLoggerProc DTWAIN_GetLoggerCallbackDelegate();
+        public delegate int DTWAIN_GetMajorMinorVersionDelegate(ref DWORD nMajor, ref DWORD nMinor);
         public delegate int DTWAIN_GetManualDuplexCountDelegate(DTWAIN_SOURCE Source, ref int pSide1, ref int pSide2);
         public delegate int DTWAIN_GetMaxAcquisitionsDelegate(DTWAIN_SOURCE Source);
         public delegate int DTWAIN_GetMaxBuffersDelegate(DTWAIN_SOURCE Source, ref DWORD pMaxBuf);
@@ -2492,6 +2504,7 @@
         public delegate int DTWAIN_GetVersionCopyrightDelegate([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder lpszApp, int nLength);
         public delegate int DTWAIN_GetVersionCopyrightDelegate_overload(System.IntPtr lpszApp, int nLength);
         public delegate int DTWAIN_GetVersionExDelegate(ref int lMajor, ref int lMinor, ref int lVersionType, ref int lPatchLevel);
+        public delegate int DTWAIN_GetVersionEx2Delegate(ref int lMajor, ref int lMinor, ref int lVersionType, ref int lPatchLevel, ref int lBuildNumber);
         public delegate int DTWAIN_GetVersionInfoDelegate([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder lpszVer, int nLength);
         public delegate int DTWAIN_GetVersionInfoDelegate_overload(System.IntPtr lpszVer, int nLength);
         public delegate int DTWAIN_GetVersionStringDelegate([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder lpszVer, int nLength);
@@ -2730,7 +2743,7 @@
         public delegate int DTWAIN_SetDoubleFeedDetectValuesDelegate(DTWAIN_SOURCE Source, DTWAIN_ARRAY prray);
         public delegate int DTWAIN_SetDoublePageCountOnDuplexDelegate(DTWAIN_SOURCE Source, int bDoubleCount);
         public delegate int DTWAIN_SetEOJDetectValueDelegate(DTWAIN_SOURCE Source, int nValue);
-        public delegate int DTWAIN_SetErrorBufferThresholdDelegate(int nErrors);
+        public delegate int DTWAIN_SetErrorBufferThresholdDelegate(uint nErrors);
         public delegate int DTWAIN_SetErrorCallbackDelegate(DTwainErrorProc proc, int UserData);
         public delegate int DTWAIN_SetErrorCallback64Delegate(DTwainErrorProc64 proc, long UserData64);
         public delegate int DTWAIN_SetFeederAlignmentDelegate(DTWAIN_SOURCE Source, int lpAlignment);
@@ -2754,6 +2767,7 @@
         public delegate int DTWAIN_SetLightSourcesDelegate(DTWAIN_SOURCE Source, DTWAIN_ARRAY LightSources);
         public delegate int DTWAIN_SetLogSaveThresholdDelegate(LONG64 lineCount);
         public delegate int DTWAIN_SetLoggerCallbackDelegate(DTwainLoggerProc logProc, long UserData);
+        public delegate int DTWAIN_SetMajorMinorVersionDelegate(uint nMajor, uint nMinor);
         public delegate int DTWAIN_SetManualDuplexModeDelegate(DTWAIN_SOURCE Source, int Flags, int bSet);
         public delegate int DTWAIN_SetMaxAcquisitionsDelegate(DTWAIN_SOURCE Source, int MaxAcquires);
         public delegate int DTWAIN_SetMaxBuffersDelegate(DTWAIN_SOURCE Source, uint MaxBuf);
@@ -2840,6 +2854,7 @@
         public delegate DTWAIN_HANDLE DTWAIN_SysInitializeLibExDelegate(HINSTANCE hInstance, [MarshalAs(UnmanagedType.LPTStr)] string szINIPath);
         public delegate DTWAIN_HANDLE DTWAIN_SysInitializeLibEx2Delegate(HINSTANCE hInstance, [MarshalAs(UnmanagedType.LPTStr)] string szINIPath, [MarshalAs(UnmanagedType.LPTStr)] string szImageDLLPath, [MarshalAs(UnmanagedType.LPTStr)] string szLangResourcePath);
         public delegate DTWAIN_HANDLE DTWAIN_SysInitializeNoBlockingDelegate();
+        public delegate DTWAIN_HANDLE DTWAIN_SysInitializeNoBlockingExDelegate(int bCreateLogFile);
         public delegate DTWAIN_ARRAY DTWAIN_TestGetCapDelegate(DTWAIN_SOURCE Source, int lCapability);
         public delegate int DTWAIN_UnlockMemoryDelegate(HANDLE h);
         public delegate int DTWAIN_UnlockMemoryExDelegate(HANDLE h);
@@ -3008,6 +3023,9 @@
 
         [DTWAINNativeFunction("DTWAIN_ArrayCreateFromStrings")]
         private readonly DTWAIN_ArrayCreateFromStringsDelegate  _DTWAIN_ArrayCreateFromStrings;
+
+        [DTWAINNativeFunction("DTWAIN_ArrayCreateFromType")]
+        private readonly DTWAIN_ArrayCreateFromTypeDelegate  _DTWAIN_ArrayCreateFromType;
 
         [DTWAINNativeFunction("DTWAIN_ArrayCreateFromWideStrings")]
         private readonly DTWAIN_ArrayCreateFromWideStringsDelegate  _DTWAIN_ArrayCreateFromWideStrings;
@@ -3275,6 +3293,9 @@
 
         [DTWAINNativeFunction("DTWAIN_CallDSMProc")]
         private readonly DTWAIN_CallDSMProcDelegate  _DTWAIN_CallDSMProc;
+
+        [DTWAINNativeFunction("DTWAIN_CheckDLLVersion")]
+        private readonly DTWAIN_CheckDLLVersionDelegate  _DTWAIN_CheckDLLVersion;
 
         [DTWAINNativeFunction("DTWAIN_CheckHandles")]
         private readonly DTWAIN_CheckHandlesDelegate  _DTWAIN_CheckHandles;
@@ -4242,6 +4263,9 @@
         [DTWAINNativeFunction("DTWAIN_GetLoggerCallback")]
         private readonly DTWAIN_GetLoggerCallbackDelegate  _DTWAIN_GetLoggerCallback;
 
+        [DTWAINNativeFunction("DTWAIN_GetMajorMinorVersion")]
+        private readonly DTWAIN_GetMajorMinorVersionDelegate  _DTWAIN_GetMajorMinorVersion;
+
         [DTWAINNativeFunction("DTWAIN_GetManualDuplexCount")]
         private readonly DTWAIN_GetManualDuplexCountDelegate  _DTWAIN_GetManualDuplexCount;
 
@@ -4601,6 +4625,9 @@
 
         [DTWAINNativeFunction("DTWAIN_GetVersionEx")]
         private readonly DTWAIN_GetVersionExDelegate  _DTWAIN_GetVersionEx;
+
+        [DTWAINNativeFunction("DTWAIN_GetVersionEx2")]
+        private readonly DTWAIN_GetVersionEx2Delegate  _DTWAIN_GetVersionEx2;
 
         [DTWAINNativeFunction("DTWAIN_GetVersionInfo")]
         private readonly DTWAIN_GetVersionInfoDelegate  _DTWAIN_GetVersionInfo;
@@ -5388,6 +5415,9 @@
         [DTWAINNativeFunction("DTWAIN_SetLoggerCallback")]
         private readonly DTWAIN_SetLoggerCallbackDelegate  _DTWAIN_SetLoggerCallback;
 
+        [DTWAINNativeFunction("DTWAIN_SetMajorMinorVersion")]
+        private readonly DTWAIN_SetMajorMinorVersionDelegate  _DTWAIN_SetMajorMinorVersion;
+
         [DTWAINNativeFunction("DTWAIN_SetManualDuplexMode")]
         private readonly DTWAIN_SetManualDuplexModeDelegate  _DTWAIN_SetManualDuplexMode;
 
@@ -5646,6 +5676,9 @@
         [DTWAINNativeFunction("DTWAIN_SysInitializeNoBlocking")]
         private readonly DTWAIN_SysInitializeNoBlockingDelegate  _DTWAIN_SysInitializeNoBlocking;
 
+        [DTWAINNativeFunction("DTWAIN_SysInitializeNoBlockingEx")]
+        private readonly DTWAIN_SysInitializeNoBlockingExDelegate  _DTWAIN_SysInitializeNoBlockingEx;
+
         [DTWAINNativeFunction("DTWAIN_TestGetCap")]
         private readonly DTWAIN_TestGetCapDelegate  _DTWAIN_TestGetCap;
 
@@ -5809,6 +5842,9 @@
 
         public  DTWAIN_ARRAY DTWAIN_ArrayCreateFromStrings([In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPTStr)] string[] pCArray, int nSize)
         => _DTWAIN_ArrayCreateFromStrings(pCArray, nSize);
+
+        public  DTWAIN_ARRAY DTWAIN_ArrayCreateFromType(DTWAIN_SOURCE Source, int lType, int lSize)
+        => _DTWAIN_ArrayCreateFromType(Source, lType, lSize);
 
         public  DTWAIN_ARRAY DTWAIN_ArrayCreateFromWideStrings([In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[] pCArray, int nSize)
         => _DTWAIN_ArrayCreateFromWideStrings(pCArray, nSize);
@@ -6076,6 +6112,9 @@
 
         public  int DTWAIN_CallDSMProc(DTWAIN_IDENTITY AppID, DTWAIN_IDENTITY SourceId, int lDG, int lDAT, int lMSG, System.IntPtr pData)
         => _DTWAIN_CallDSMProc(AppID, SourceId, lDG, lDAT, lMSG, pData);
+
+        public  int DTWAIN_CheckDLLVersion(int lMajor, int lMinor, int lPatchLevel, int lBuildNumber, int MatchType)
+        => _DTWAIN_CheckDLLVersion(lMajor, lMinor, lPatchLevel, lBuildNumber, MatchType);
 
         public  int DTWAIN_CheckHandles(int bCheck)
         => _DTWAIN_CheckHandles(bCheck);
@@ -6803,7 +6842,7 @@
         public  int DTWAIN_GetCaption (DTWAIN_SOURCE Source, System.IntPtr Caption)
         => _DTWAIN_GetCaption_overload(Source, Caption);
 
-        public  int DTWAIN_GetCompressionSize(DTWAIN_SOURCE Source, ref int lBytes)
+        public  int DTWAIN_GetCompressionSize(DTWAIN_SOURCE Source, ref DWORD lBytes)
         => _DTWAIN_GetCompressionSize(Source, ref lBytes);
 
         public  int DTWAIN_GetCompressionType(DTWAIN_SOURCE Source, ref int lpCompression, int bCurrent)
@@ -6875,10 +6914,10 @@
         public  DTWAIN_HANDLE DTWAIN_GetDTWAINHandle()
         => _DTWAIN_GetDTWAINHandle();
 
-        public  int DTWAIN_GetDeviceEvent(DTWAIN_SOURCE Source, ref int lpEvent)
+        public  int DTWAIN_GetDeviceEvent(DTWAIN_SOURCE Source, ref DWORD lpEvent)
         => _DTWAIN_GetDeviceEvent(Source, ref lpEvent);
 
-        public  int DTWAIN_GetDeviceEventEx(DTWAIN_SOURCE Source, ref int lpEvent, ref DTWAIN_ARRAY pArray)
+        public  int DTWAIN_GetDeviceEventEx(DTWAIN_SOURCE Source, ref DWORD lpEvent, ref DTWAIN_ARRAY pArray)
         => _DTWAIN_GetDeviceEventEx(Source, ref lpEvent, ref pArray);
 
         public  int DTWAIN_GetDeviceEventInfo(DTWAIN_SOURCE Source, int nWhichInfo, System.IntPtr pValue)
@@ -6908,7 +6947,7 @@
         public  int DTWAIN_GetErrorBuffer(ref DTWAIN_ARRAY ArrayBuffer)
         => _DTWAIN_GetErrorBuffer(ref ArrayBuffer);
 
-        public  int DTWAIN_GetErrorBufferThreshold()
+        public  uint DTWAIN_GetErrorBufferThreshold()
         => _DTWAIN_GetErrorBufferThreshold();
 
         public  DTwainErrorProc DTWAIN_GetErrorCallback()
@@ -7042,6 +7081,9 @@
 
         public  DTwainLoggerProc DTWAIN_GetLoggerCallback()
         => _DTWAIN_GetLoggerCallback();
+
+        public  int DTWAIN_GetMajorMinorVersion(ref DWORD nMajor, ref DWORD nMinor)
+        => _DTWAIN_GetMajorMinorVersion(ref nMajor, ref nMinor);
 
         public  int DTWAIN_GetManualDuplexCount(DTWAIN_SOURCE Source, ref int pSide1, ref int pSide2)
         => _DTWAIN_GetManualDuplexCount(Source, ref pSide1, ref pSide2);
@@ -7402,6 +7444,9 @@
 
         public  int DTWAIN_GetVersionEx(ref int lMajor, ref int lMinor, ref int lVersionType, ref int lPatchLevel)
         => _DTWAIN_GetVersionEx(ref lMajor, ref lMinor, ref lVersionType, ref lPatchLevel);
+
+        public  int DTWAIN_GetVersionEx2(ref int lMajor, ref int lMinor, ref int lVersionType, ref int lPatchLevel, ref int lBuildNumber)
+        => _DTWAIN_GetVersionEx2(ref lMajor, ref lMinor, ref lVersionType, ref lPatchLevel, ref lBuildNumber);
 
         public  int DTWAIN_GetVersionInfo([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder lpszVer, int nLength)
         => _DTWAIN_GetVersionInfo(lpszVer, nLength);
@@ -8117,7 +8162,7 @@
         public  int DTWAIN_SetEOJDetectValue(DTWAIN_SOURCE Source, int nValue)
         => _DTWAIN_SetEOJDetectValue(Source, nValue);
 
-        public  int DTWAIN_SetErrorBufferThreshold(int nErrors)
+        public  int DTWAIN_SetErrorBufferThreshold(uint nErrors)
         => _DTWAIN_SetErrorBufferThreshold(nErrors);
 
         public  int DTWAIN_SetErrorCallback(DTwainErrorProc proc, int UserData)
@@ -8188,6 +8233,9 @@
 
         public  int DTWAIN_SetLoggerCallback(DTwainLoggerProc logProc, long UserData)
         => _DTWAIN_SetLoggerCallback(logProc, UserData);
+
+        public  int DTWAIN_SetMajorMinorVersion(uint nMajor, uint nMinor)
+        => _DTWAIN_SetMajorMinorVersion(nMajor, nMinor);
 
         public  int DTWAIN_SetManualDuplexMode(DTWAIN_SOURCE Source, int Flags, int bSet)
         => _DTWAIN_SetManualDuplexMode(Source, Flags, bSet);
@@ -8446,6 +8494,9 @@
 
         public  DTWAIN_HANDLE DTWAIN_SysInitializeNoBlocking()
         => _DTWAIN_SysInitializeNoBlocking();
+
+        public  DTWAIN_HANDLE DTWAIN_SysInitializeNoBlockingEx(int bCreateLogFile)
+        => _DTWAIN_SysInitializeNoBlockingEx(bCreateLogFile);
 
         public  DTWAIN_ARRAY DTWAIN_TestGetCap(DTWAIN_SOURCE Source, int lCapability)
         => _DTWAIN_TestGetCap(Source, lCapability);
