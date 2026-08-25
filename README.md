@@ -9,6 +9,6 @@ The **FullDemo_Dynamic** folder contains a Visual Studio project **CSharp_FullDe
 
 To build the demos, simply load the appropriate solution (.sln file) into Visual Studio (at least VS 2019), and choose **Build -> Build Solution** from the Visual Studio main menu.
 
-Once built, the demos assumes that <a href="https://github.com/dynarithmic/twain_library/tree/master/binaries" target="_blank">the DTWAIN DLL's</a> are available (either on the system PATH or in the same directory as the executable) when the demo is run.  
+Once built, the demos assumes that [the DTWAIN DLL's](https://github.com/dynarithmic/twain_library/releases/tag/v5.9.3) are available (either on the system PATH or in the same directory as the executable) when the demo is run.  
 
 In addition, please remember that the DTWAIN [text resources](https://github.com/dynarithmic/twain_library/tree/master/text_resources) also need to be available (perferably in the same directory as the DTWAIN DLL's).
